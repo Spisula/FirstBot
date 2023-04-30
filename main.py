@@ -1,10 +1,9 @@
 import requests
 import time
-
+from settings import BOT_TOKEN
 
 API_URL: str = 'https://api.telegram.org/bot'
 API_DOGS_URL: str = 'https://random.dog/woof.json'
-BOT_TOKEN: str = '5886220274:AAH6QAYckGGLKQAx22bQ4Jb2tUYLMS_a2sU'
 ERROR_TEXT: str = 'Нет картинки (('
 MAX_COUNTER: int = 100
 
