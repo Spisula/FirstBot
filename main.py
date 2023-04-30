@@ -2,35 +2,26 @@ import requests
 import time
 from settings import BOT_TOKEN
 
+
 API_URL: str = 'https://api.telegram.org/bot'
-API_DOGS_URL: str = 'https://random.dog/woof.json'
-ERROR_TEXT: str = 'Нет картинки (('
-MAX_COUNTER: int = 100
-
 offset: int = -2
-counter: int = 0
-chat_id: int
-dog_response: requests.Response
-dog_link: str
+updates: dict
+timeout = 60
 
-while counter < MAX_COUNTER:
+def do_something() -> None:
+    print('Был апдейт')
 
-    print('attempt =', counter)  #Чтобы видеть в консоли, что код живет
 
-    updates = requests.get(f'{API_URL}{BOT_TOKEN}/getUpdates?offset={offset + 1}').json()
+while True:
+    start_time = time.time()
+    updates = requests.get(f'{API_URL}{BOT_TOKEN}/getUpdates?offset={offset + 1}&timeout={timeout}').json()
 
     if updates['result']:
         for result in updates['result']:
+            print(result['message']['text'])
             offset = result['update_id']
-            if 'message' in result: # проверяет есть ли ключ message в апдейте
-                chat_id = result['message']['from']['id']
-            else:  #если в апдейте ключ не message, а edited_message, тогда ничего не происходит и
-                continue  # не выдает ошибку
-            dog_response = requests.get(API_DOGS_URL)
-            if dog_response.status_code == 200:
-                dog_link = dog_response.json()['url']
-                requests.get(f'{API_URL}{BOT_TOKEN}/sendPhoto?chat_id={chat_id}&photo={dog_link}')
-            else:
-                requests.get(f'{API_URL}{BOT_TOKEN}/sendMessage?chat_id={chat_id}&text={ERROR_TEXT}')
+            do_something()
+
     time.sleep(1)
-    counter += 1
+    end_time = time.time()
+    print(f'Время между запросами к Telegram Bot API: {end_time - start_time}')
